@@ -54,8 +54,6 @@ def upset_plots(input_files, outfile="UpSet_plot.png", DE=True):
     if DE:
         input_dict = {name: geneids for input_dict in generate_lists_of_DE_genes(input_files) for name, geneids in input_dict.items()}
 
-        print(input_dict)
-
         if input_dict:
             names = [re.sub("_geneids", "", key) for key in input_dict.keys()]
             sets = list(input_dict.values())
@@ -103,11 +101,14 @@ def main():
     elif args.DE_files and not args.lists_of_strings:
         if args.outfile:
           upset_plots ( args.DE_files, DE = True, outfile = args.outfile )
+        else:
+          upset_plots ( args.DE_files, DE = True )
             
     elif not args.DE_files and args.lists_of_strings:
         if args.outfile:
           upset_plots ( args.lists_of_strings, DE = False, outfile = args.outfile )
-        
+        else:
+          upset_plots ( args.lists_of_strings, DE = True )
             
 if __name__ == "__main__":
     main()
