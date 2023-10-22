@@ -50,7 +50,7 @@ def generate_lists_of_DE_genes(filenames):
 def upset_plots(input_files, outfile="UpSet_plot.png", DE=True):
     sets = []
     
-    if DE:
+    if DE == True:
         input_dict = {name: geneids for input_dict in generate_lists_of_DE_genes(input_files) for name, geneids in input_dict.items()}
 
         if input_dict:
