@@ -4,7 +4,6 @@ import argparse
 import pandas as pd
 from upsetplot import UpSet
 from matplotlib import pyplot
-from itertools import combinations
 
 
 def open_DE_file(filename):
