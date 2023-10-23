@@ -109,7 +109,7 @@ def main():
         upset_plots ( args.DE_files, plot = args.plot, image_format = args.image_format, DE = True )
             
     elif not args.DE_files and args.lists_of_strings:
-        upset_plots ( args.lists_of_strings, DE = False )
+        upset_plots ( args.lists_of_strings, plot = args.plot, image_format = args.image_format, DE = False )
 
     elif args.DE_files and args.lists_of_strings:
         print ( "Please select either DE files or lists of strings.")
