@@ -79,7 +79,7 @@ def upset_plots(input_files, outfile="UpSet_genes.tsv", plot="UpSet_plot", image
     
     df_counts = df.groupby(names).size()  # Group based on presence and compute size
     UpSet(df_counts, orientation='horizontal', subset_size='sum', show_counts=True).plot()
-    pyplot.savefig(plot=plot, format=image_format, dpi=600)
+    pyplot.savefig(plot, format=image_format, dpi=600)
     
 
 def kargs():
