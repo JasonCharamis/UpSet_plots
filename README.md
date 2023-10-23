@@ -1,5 +1,4 @@
 # UpSet_plots
-Code to create UpSet plots from list of differentially expressed (DE) genes or any list of strings provided.
-
+Python library to create UpSet plots from provided lists of differentially expressed (DE) genes or any other lists of strings.
 
 
