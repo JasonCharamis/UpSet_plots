@@ -75,7 +75,7 @@ def upset_plots(input_files, outfile="UpSet_plot.png", DE=True):
     all_elems = list(set().union(*sets))  # Unpack sets, find the unique elements and save them into a list
     df = pd.DataFrame([[e in st for st in sets] for e in all_elems], columns=names, index=all_elems)  # Check if each of the unique elements is found in each subset
 
-    df.to_csv('UpSet_genes.tsv', sep = '\t', index=all_elems, index_label= "GeneID")
+    df.to_csv('UpSet_genes.tsv', sep = '\t', index=all_elems, index_label= "GeneID") ## Save results of per gene presence in tab-separated file.
     
     df_counts = df.groupby(names).size()  # Group based on presence and compute size
     UpSet(df_counts, orientation='horizontal', subset_size='sum', show_counts=True).plot()
@@ -118,4 +118,3 @@ def main():
         
 if __name__ == "__main__":
     main()
-
