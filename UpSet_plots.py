@@ -55,7 +55,7 @@ def generate_lists_of_DE_genes(filenames):
     
 
     
-def upset_plots(input_files, outfile="UpSet_plot.png", DE=True):
+def upset_plots(input_files, outfile="UpSet_genes.tsv", plot="UpSet_plot", image_format="svg", DE=True):
     sets = []
     
     if DE:
@@ -75,18 +75,21 @@ def upset_plots(input_files, outfile="UpSet_plot.png", DE=True):
     all_elems = list(set().union(*sets))  # Unpack sets, find the unique elements and save them into a list
     df = pd.DataFrame([[e in st for st in sets] for e in all_elems], columns=names, index=all_elems)  # Check if each of the unique elements is found in each subset
 
-    df.to_csv('UpSet_genes.tsv', sep = '\t', index=all_elems, index_label= "GeneID") ## Save results of per gene presence in tab-separated file.
+    df.to_csv(outfile, sep = '\t', index=all_elems, index_label= "GeneID") ## Save results of per gene presence in tab-separated file.
     
     df_counts = df.groupby(names).size()  # Group based on presence and compute size
     UpSet(df_counts, orientation='horizontal', subset_size='sum', show_counts=True).plot()
-    pyplot.savefig(outfile)
+    pyplot.savefig(plot=plot, format=image_format, dpi=600)
+    
 
 def kargs():
     # Parse command-line arguments
     parser = argparse.ArgumentParser(description='Create Upset plots from a collection of lists.')
     parser.add_argument('-DE', '--DE_files', type=str, help='List of DE files to generate subsets of commonly up-regulated, commonly down-regulated and other interesting categories of genes.')
     parser.add_argument('-ls', '--lists_of_strings', type=str, help='Lists of strings, in the case of not provided DE files.')
-    parser.add_argument('-out', '--outfile', type=str, help='Output png file to print UpSet plot.')
+    parser.add_argument('-out', '--outfile', type=str, help='Output file to save UpSet plot.')
+    parser.add_argument('-plt', '--plot', type=str, help='Output png file to print UpSet plot.')
+    parser.add_argument('-img', '--image_format', type=str, help='Format to save image.')
 
     args = parser.parse_args()
 
@@ -103,7 +106,7 @@ def main():
     args = kargs()
 
     if args.DE_files and not args.lists_of_strings:
-        upset_plots ( args.DE_files, DE = True )
+        upset_plots ( args.DE_files, plot = args.plot, image_format = args.image_format, DE = True )
             
     elif not args.DE_files and args.lists_of_strings:
         upset_plots ( args.lists_of_strings, DE = False )
