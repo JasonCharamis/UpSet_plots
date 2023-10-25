@@ -86,11 +86,11 @@ def kargs():
     # Parse command-line arguments
     parser = argparse.ArgumentParser(description='Create Upset plots from a collection of lists.')
     parser.add_argument('-DE', '--DE_files', type=str, help='List of DE files to generate subsets of commonly up-regulated, commonly down-regulated and other interesting categories of genes.')
-    parser.add_argument('-f', '--field', type=str, help='Field in DE files to find Fold Change (FC) values and define upregulated and downregulated genes.')
+    parser.add_argument('-f', '--field', type=str, help='Field in DE files to find Fold Change (FC) values and define upregulated and downregulated genes. Default: second field (1).')
     parser.add_argument('-ls', '--lists_of_strings', type=str, help='Lists of strings, in the case of not provided DE files.')
-    parser.add_argument('-out', '--outfile', type=str, help='Output file to save UpSet plot.')
-    parser.add_argument('-plt', '--plot', type=str, help='Output png file to print UpSet plot.')
-    parser.add_argument('-img', '--image_format', type=str, help='Format to save image.')
+    parser.add_argument('-out', '--outfile', type=str, help='Output file to save UpSet plot. Default: "UpSet_genes.tsv" ')
+    parser.add_argument('-plt', '--plot', type=str, help='Output png file to print UpSet plot. Default: "UpSet_plot.svg" ')
+    parser.add_argument('-img', '--image_format', type=str, help='Format to save image. Default: "svg" ')
 
     args = parser.parse_args()
 
