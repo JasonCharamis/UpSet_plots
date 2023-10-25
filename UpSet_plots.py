@@ -110,7 +110,7 @@ def main():
         upset_plots(args.DE_files, plot=args.plot if args.plot else 'UpSet_plot', image_format=args.image_format if args.image_format else 'svg', field=args.field if args.field else '1', DE=True)
             
     elif not args.DE_files and args.lists_of_strings:
-        upset_plots(args.DE_files, plot=args.plot if args.plot else 'UpSet_plot', image_format=args.image_format if args.image_format else 'svg', field=args.field if args.field else '1', DE=False)
+        upset_plots(args.DE_files, plot=args.plot if args.plot else 'UpSet_plot', image_format=args.image_format if args.image_format else 'svg', field=args.field if args.field else '0', DE=False)
 
     elif args.DE_files and args.lists_of_strings:
         print ( "Please select either DE files or lists of strings.")
