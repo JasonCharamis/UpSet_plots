@@ -20,7 +20,7 @@ def open_DE_file(filename):
     return geneids
 
 
-def generate_lists_of_DE_genes(filenames):
+def generate_lists_of_DE_genes(filenames, field = 1):
    
     subsets = []
 
@@ -40,7 +40,7 @@ def generate_lists_of_DE_genes(filenames):
             file_geneids_dict[filename + "_downregulated"] = []
 
             for geneid in geneids.keys():
-                if float(geneids[geneid].split('\t')[1]) > 0:
+                if float(geneids[geneid].split('\t')[int(field)]) > 0:
                     file_geneids_dict[filename + "_upregulated"].append(geneid)
                 else:
                     file_geneids_dict[filename + "_downregulated"].append(geneid)
@@ -55,11 +55,11 @@ def generate_lists_of_DE_genes(filenames):
     
 
     
-def upset_plots(input_files, outfile="UpSet_genes.tsv", plot="UpSet_plot", image_format="svg", DE=True):
+def upset_plots(input_files, outfile="UpSet_genes.tsv", plot="UpSet_plot", image_format="svg", field = 1, DE=True):
     sets = []
     
     if DE:
-        input_dict = {name: geneids for input_dict in generate_lists_of_DE_genes(input_files) for name, geneids in input_dict.items()}
+        input_dict = {name: geneids for input_dict in generate_lists_of_DE_genes(input_files, field = int(field)) for name, geneids in input_dict.items()}
 
         if input_dict:
             names = [re.sub("_geneids|regulated", "", key) for key in input_dict.keys()]
@@ -86,6 +86,7 @@ def kargs():
     # Parse command-line arguments
     parser = argparse.ArgumentParser(description='Create Upset plots from a collection of lists.')
     parser.add_argument('-DE', '--DE_files', type=str, help='List of DE files to generate subsets of commonly up-regulated, commonly down-regulated and other interesting categories of genes.')
+    parser.add_argument('-f', '--field', type=str, help='Field in DE files to find Fold Change (FC) values and define upregulated and downregulated genes.')
     parser.add_argument('-ls', '--lists_of_strings', type=str, help='Lists of strings, in the case of not provided DE files.')
     parser.add_argument('-out', '--outfile', type=str, help='Output file to save UpSet plot.')
     parser.add_argument('-plt', '--plot', type=str, help='Output png file to print UpSet plot.')
@@ -106,22 +107,10 @@ def main():
     args = kargs()
 
     if args.DE_files and not args.lists_of_strings:
-        if args.plot:
-            if args.image_format:
-                upset_plots ( args.DE_files, plot = args.plot, image_format = args.image_format, DE = True )
-            else:
-                upset_plots ( args.DE_files, plot = args.plot, image_format = "svg", DE = True )
-        else:
-            upset_plots ( args.DE_files, plot = "UpSet_plot", image_format = "svg", DE = True )        
+        upset_plots(args.DE_files, plot=args.plot if args.plot else 'UpSet_plot', image_format=args.image_format if args.image_format else 'svg', field=args.field if args.field else '1', DE=True)
             
     elif not args.DE_files and args.lists_of_strings:
-        if args.plot:
-            if args.image_format:
-                upset_plots ( args.lists_of_strings, plot = args.plot, image_format = args.image_format, DE = True )
-            else:
-                upset_plots ( args.lists_of_strings, plot = args.plot, image_format = "svg", DE = True )
-        else:
-            upset_plots ( args.lists_of_strings, plot = "UpSet_plot", image_format = "svg", DE = True )
+        upset_plots(args.DE_files, plot=args.plot if args.plot else 'UpSet_plot', image_format=args.image_format if args.image_format else 'svg', field=args.field if args.field else '1', DE=False)
 
     elif args.DE_files and args.lists_of_strings:
         print ( "Please select either DE files or lists of strings.")
