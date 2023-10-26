@@ -6,7 +6,44 @@ from upsetplot import UpSet
 from matplotlib import pyplot
 
 
-def open_DE_file(filename):
+def parseCmdArguments():
+    # Parse command-line arguments
+    parser = argparse.ArgumentParser(description='Create Upset plots from a collection of lists.')
+    parser.add_argument('-DE', '--DE_files', type=str, help='List of DE files to extract subsets of up-regulated and down-regulated genes.')
+    parser.add_argument('-f', '--field', type=str, help='Field in DE files to find Fold Change (FC) values and define up-regulated and down-regulated genes. Default: second field (1).')
+    parser.add_argument('-ls', '--lists_of_strings', type=str, help='Lists of strings, in the case of not provided DE files.')
+    parser.add_argument('-out', '--outfile', type=str, help='Output file to save UpSet plot. Default: "UpSet_genes.tsv" ')
+    parser.add_argument('-plt', '--plot', type=str, help='Output png file to print UpSet plot. Default: "UpSet_plot.svg" ')
+    parser.add_argument('-img', '--image_format', type=str, help='Format to save image. Default: "svg" ')
+
+    args = parser.parse_args()
+
+    if not any(vars(args).values()):
+        parser.print_help()
+        print("Error: No arguments provided.")
+
+    return args
+
+
+def main():
+    
+    parser = argparse.ArgumentParser(description='Script to construct UpSet plots from DE files or lists of strings.')
+    args = parseCmdArguments()
+
+    if args.DE_files and not args.lists_of_strings:
+        upset_plots(args.DE_files, plot=args.plot if args.plot else 'UpSet_plot', image_format=args.image_format if args.image_format else 'svg', field=args.field if args.field else '1', DE=True)
+            
+    elif not args.DE_files and args.lists_of_strings:
+        upset_plots(args.DE_files, plot=args.plot if args.plot else 'UpSet_plot', image_format=args.image_format if args.image_format else 'svg', field=args.field if args.field else '0', DE=False)
+
+    elif args.DE_files and args.lists_of_strings:
+        print ( "Please select either DE files or lists of strings.")
+
+    else:
+        print ("Please provide a file as input.")
+        
+
+def open_DE_file(filename): ## open DE file and save in dictionary
     geneids = {}
     
     with open(filename, "r") as file:
@@ -20,8 +57,7 @@ def open_DE_file(filename):
     return geneids
 
 
-def generate_lists_of_DE_genes(filenames, field = 1):
-   
+def generate_lists_of_DE_genes(filenames, field = 1): ## generate lists of UP and DOWN regulated genes from DE files   
     subsets = []
 
     with open ( filenames, "r" ) as fls:
@@ -36,14 +72,14 @@ def generate_lists_of_DE_genes(filenames, field = 1):
             filename_regex = re.compile("../|\..*")
             filename = re.sub(filename_regex, "", filename)
 
-            file_geneids_dict[filename + "_upregulated"] = []
-            file_geneids_dict[filename + "_downregulated"] = []
+            file_geneids_dict[filename + "_UPregulated"] = []
+            file_geneids_dict[filename + "_DOWNregulated"] = []
 
             for geneid in geneids.keys():
                 if float(geneids[geneid].split('\t')[int(field)]) > 0:
-                    file_geneids_dict[filename + "_upregulated"].append(geneid)
+                    file_geneids_dict[filename + "_UPregulated"].append(geneid)
                 else:
-                    file_geneids_dict[filename + "_downregulated"].append(geneid)
+                    file_geneids_dict[filename + "_DOWNregulated"].append(geneid)
 
             for comparisons, genes in file_geneids_dict.items():
                 if genes:
@@ -54,7 +90,6 @@ def generate_lists_of_DE_genes(filenames, field = 1):
     return subsets
     
 
-    
 def upset_plots(input_files, outfile="UpSet_genes.tsv", plot="UpSet_plot", image_format="svg", field = 1, DE=True):
     sets = []
     
@@ -81,43 +116,6 @@ def upset_plots(input_files, outfile="UpSet_genes.tsv", plot="UpSet_plot", image
     UpSet(df_counts, orientation='horizontal', subset_size='sum', show_counts=True).plot()
     pyplot.savefig(plot, format=image_format, dpi=600)
     
-
-def kargs():
-    # Parse command-line arguments
-    parser = argparse.ArgumentParser(description='Create Upset plots from a collection of lists.')
-    parser.add_argument('-DE', '--DE_files', type=str, help='List of DE files to generate subsets of commonly up-regulated, commonly down-regulated and other interesting categories of genes.')
-    parser.add_argument('-f', '--field', type=str, help='Field in DE files to find Fold Change (FC) values and define upregulated and downregulated genes. Default: second field (1).')
-    parser.add_argument('-ls', '--lists_of_strings', type=str, help='Lists of strings, in the case of not provided DE files.')
-    parser.add_argument('-out', '--outfile', type=str, help='Output file to save UpSet plot. Default: "UpSet_genes.tsv" ')
-    parser.add_argument('-plt', '--plot', type=str, help='Output png file to print UpSet plot. Default: "UpSet_plot.svg" ')
-    parser.add_argument('-img', '--image_format', type=str, help='Format to save image. Default: "svg" ')
-
-    args = parser.parse_args()
-
-    if not any(vars(args).values()):
-        parser.print_help()
-        print("Error: No arguments provided.")
-
-    return args
-
-
-def main():
-    
-    parser = argparse.ArgumentParser(description='Script to construct UpSet plots from DE files or lists of strings.')
-    args = kargs()
-
-    if args.DE_files and not args.lists_of_strings:
-        upset_plots(args.DE_files, plot=args.plot if args.plot else 'UpSet_plot', image_format=args.image_format if args.image_format else 'svg', field=args.field if args.field else '1', DE=True)
-            
-    elif not args.DE_files and args.lists_of_strings:
-        upset_plots(args.DE_files, plot=args.plot if args.plot else 'UpSet_plot', image_format=args.image_format if args.image_format else 'svg', field=args.field if args.field else '0', DE=False)
-
-    elif args.DE_files and args.lists_of_strings:
-        print ( "Please select either DE files or lists of strings.")
-
-    else:
-        print ("Please provide a file as input.")
-        
 
         
 if __name__ == "__main__":
