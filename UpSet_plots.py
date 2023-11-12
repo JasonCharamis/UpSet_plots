@@ -27,7 +27,6 @@ def parseCmdArguments():
 
 def main():
     
-    parser = argparse.ArgumentParser(description='Script to construct UpSet plots from DE files or lists of strings.')
     args = parseCmdArguments()
 
     if args.DE_files and not args.lists_of_strings:
