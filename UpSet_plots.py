@@ -20,7 +20,6 @@ def parseCmdArguments():
 
     if not any(vars(args).values()):
         parser.print_help()
-        print("Error: No arguments provided.")
 
     return args
 
@@ -39,7 +38,7 @@ def main():
         print ( "Please select either DE files or lists of strings.")
 
     else:
-        print ("Please provide a file as input.")
+        print ("Please provide a list of files as input.")
         
 
 def open_DE_file(filename): ## open DE file and save in dictionary
